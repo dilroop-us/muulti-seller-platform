@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Summary{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-12 p-8 bg-white shadow-lg rounded-xl">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Order Summary</h2>
+
+    <!-- Order Details -->
+    <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+        <div class="grid grid-cols-2 gap-4">
+            <p class="text-lg text-gray-700"><span class="font-semibold">Order ID:</span> #{{ order.order_uuid }}</p>
+            <p class="text-lg text-gray-700"><span class="font-semibold">Status:</span> 
+                <span class="px-3 py-1 rounded-full text-white text-sm 
+                    {% if order.status == 'pending' %} bg-yellow-500 
+                    {% elif order.status == 'delivered' %} bg-green-500 
+                    {% elif order.status == 'processing' %} bg-blue-500 
+                    {% else %} bg-red-500 {% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </p>
+            <p class="text-lg text-gray-700"><span class="font-semibold">Total Price:</span> ${{ order.total_price }}</p>
+            <p class="text-lg text-gray-700"><span class="font-semibold">Payment Method:</span> {{ order.get_payment_method_display }}</p>
+            <p class="text-lg text-gray-700"><span class="font-semibold">Placed On:</span> {{ order.created_at|date:"M d, Y H:i A" }}</p>
+            <p class="text-lg text-gray-700"><span class="font-semibold">Shipping Address:</span> {{ order.get_full_shipping_address }}</p>
+        </div>
+    </div>
+
+    <!-- Order Items Section -->
+    <h3 class="text-2xl font-semibold text-gray-900 mt-8">Order Items</h3>
+
+    {% if items %}
+    <ul class="mt-6 divide-y divide-gray-200">
+        {% for item in items %}
+        <li class="p-5 flex items-center justify-between bg-white border border-gray-200 rounded-lg shadow-md mb-4">
+            <div class="flex items-center gap-6">
+                {% if product.image %}
+                    <img class="w-20 h-20 object-cover rounded-lg shadow"" src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <img class="w-20 h-20 object-cover rounded-lg shadow"" src="{% static 'img/default.png' %}" alt="Default Product Image">
+                {% endif %} 
+                <div>
+                    <p class="font-semibold text-lg text-gray-800">{{ item.product.name }}</p>
+                    <p class="text-sm text-gray-600">Quantity: <span class="font-medium">{{ item.quantity }}</span></p>
+                    <p class="text-sm text-gray-600">Store: <span class="font-medium">{{ item.store.name }}</span></p>
+                    <span class="px-3 py-1 rounded-full text-white text-xs font-semibold 
+                        {% if item.status == 'pending' %} bg-yellow-500 
+                        {% elif item.status == 'delivered' %} bg-green-500 
+                        {% elif item.status == 'shipped' %} bg-blue-500 
+                        {% else %} bg-red-500 {% endif %}">
+                        {{ item.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            <span class="text-gray-900 text-lg font-bold">${{ item.price }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-gray-500 mt-4">No items in this order.</p>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="mt-8 flex justify-between">
+        <a href="{% url 'orders:order_list' %}" 
+           class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">
+            Back to Orders
+        </a>
+
+        {% if order.status == 'pending' %}
+        <button onclick="cancelOrder('{{ order.id }}')" 
+                class="px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition">
+            Cancel Order
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Cancel Order Script -->
+<script>
+    function cancelOrder(orderId) {
+        if (confirm("Are you sure you want to cancel this order?")) {
+            fetch(`{% url 'orders:cancel_order' order.order_uuid %}`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Unable to cancel order at this time.");
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- 🚀 HERO SECTION -->
+<div class="relative bg-gradient-to-br from-gray-900 to-black text-white py-20">
+    <div class="max-w-7xl mx-auto px-6 lg:flex items-center justify-between">
+        <div class="max-w-xl text-center lg:text-left">
+            <h1 class="text-5xl font-extrabold tracking-wide">Elevate Your Gaming</h1>
+            <p class="mt-4 text-lg text-gray-300">Next-gen gaming gear, handpicked for peak performance.</p>
+            <a href="#" class="mt-6 inline-block bg-indigo-600 px-6 py-3 rounded-md text-white hover:bg-indigo-700 shadow-lg transition transform hover:scale-105">
+                Shop Now
+            </a>
+        </div>
+        <img src="/static/img/gaming_setup.jpg" alt="Gaming Setup" class="mt-6 lg:mt-0 w-full max-w-lg rounded-lg shadow-2xl hover:scale-105 transition">
+    </div>
+</div>
+
+<!-- 🕹️ CATEGORIES SECTION -->
+<section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-900">Shop by Category</h2>
+        <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+            {% for category in categories %}
+            <a href="{% url 'core:shop_category' category.slug %}" class="relative group bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                <img src="https://via.placeholder.com/150?text={{ category.name }}" alt="{{ category.name }}" class="w-full h-32 object-cover rounded-md">
+                <h3 class="mt-4 text-lg font-semibold text-gray-800">{{ category.name }}</h3>
+                <div class="absolute inset-0 bg-indigo-600 opacity-0 group-hover:opacity-20 transition"></div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- 🎮 FEATURED GAMING PRODUCTS -->
+<section class="py-16 bg-gray-900 text-white">
+  <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center">🔥 Featured Gaming Gear</h2>
+      <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {% for product in featured_products %}
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded-lg w-full h-40 object-cover">
+              <h3 class="mt-4 text-xl font-semibold">{{ product.name }}</h3>
+              <p class="mt-2 text-gray-400">{{ product.description|truncatewords:10 }}</p>
+              <p class="mt-2 text-lg font-bold text-green-400">${{ product.get_discounted_price }}</p>
+              <a href="{% url 'core:product_details' product.slug %}" class="mt-4 inline-block bg-indigo-600 px-4 py-2 rounded-md text-white hover:bg-indigo-700 transition">Buy Now</a>
+          </div>
+          {% empty %}
+          <p class="text-center text-gray-400 col-span-4">No featured products available.</p>
+          {% endfor %}
+      </div>
+  </div>
+</section>
+
+
+
+<!-- 🚀 BEST SELLERS (HORIZONTAL SCROLL) -->
+<section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-900">🏆 Best Sellers</h2>
+        <div class="mt-10 flex space-x-6 overflow-x-auto p-4 scrollbar-hide">
+            {% for product in best_sellers %}
+            <div class="min-w-[200px] bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-32 object-cover rounded-md">
+                <h3 class="mt-4 text-lg font-semibold">{{ product.name }}</h3>
+                <p class="text-green-600 font-bold">${{ product.price }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ⚡️ SPECIAL DEALS (WITH GLOW EFFECT) -->
+<section class="py-16 bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center">⚡️ Special Deals & Discounts</h2>
+        <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {% for deal in special_deals %}
+            <div class="relative bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105 before:absolute before:inset-0 before:bg-indigo-500 before:blur-xl before:opacity-10">
+                <img src="{{ deal.image.url }}" alt="{{ deal.name }}" class="rounded-lg w-full h-40 object-cover">
+                <h3 class="mt-4 text-xl font-semibold">{{ deal.name }}</h3>
+                <p class="mt-2 text-gray-400">{{ deal.description|truncatewords:10 }}</p>
+                <p class="mt-2 text-lg font-bold text-yellow-400">Now: ${{ deal.discounted_price }} <span class="text-red-400 line-through">${{ deal.original_price }}</span></p>
+                <a href="#" class="mt-4 inline-block bg-yellow-500 px-4 py-2 rounded-md text-white hover:bg-yellow-600 transition">Grab Deal</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ⭐ CUSTOMER REVIEWS -->
+<section class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-900">✨ What Gamers Say</h2>
+        <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {% for review in reviews %}
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-gray-600 italic">"{{ review.comment }}"</p>
+                <p class="mt-4 font-semibold">- {{ review.customer_name }}</p>
+                <p class="text-yellow-400 mt-1">⭐⭐⭐⭐⭐</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- 📩 NEWSLETTER SECTION -->
+<section class="py-16 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center">
+    <h2 class="text-3xl font-bold">💌 Stay Updated</h2>
+    <p class="mt-4 text-lg">Subscribe for the latest gaming deals.</p>
+    <form class="mt-6 max-w-md mx-auto flex">
+        <input type="email" placeholder="Enter your email" class="w-full px-4 py-2 rounded-l-md bg-gray-900 text-white border-none focus:ring-2 focus:ring-indigo-300">
+        <button type="submit" class="px-6 py-2 bg-yellow-500 text-white font-medium rounded-r-md hover:bg-yellow-600">Subscribe</button>
+    </form>
+</section>
+
+{% endblock %}

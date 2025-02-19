@@ -1,0 +1,23 @@
+{% extends 'seller/seller_base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 p-6 shadow-lg rounded-lg">
+    <h2 class="text-3xl font-bold text-white mb-6">Order Item Details</h2>
+
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <p class="text-gray-300"><strong>Order ID:</strong> #{{ order.order_uuid }}</p>
+        <p class="text-gray-300"><strong>Product:</strong> {{ order_item.product.name }}</p>
+        <p class="text-gray-300"><strong>Quantity:</strong> {{ order_item.quantity }}</p>
+        <p class="text-gray-300"><strong>Price:</strong> ${{ order_item.price }}</p>
+        <p class="text-gray-300"><strong>Status:</strong> {{ order_item.get_status_display }}</p>
+        <p class="text-gray-400"><strong>Ordered On:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+    </div>
+
+    <div class="mt-6 flex justify-between">
+        <a href="{% url 'seller:seller_order_items' %}" 
+           class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition">
+           Back to Order Items
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
+        <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <h1 class="text-2xl font-bold text-gray-900 mt-4">Payment Successful!</h1>
+        <p class="text-gray-600 mt-2">Thank you for your purchase. Your order has been successfully placed.</p>
+
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg shadow-md">
+            <p class="text-lg font-semibold text-gray-800">Order ID: <span class="text-blue-600">#{{ order.order_uuid }}</span></p>
+            <p class="text-gray-700">Total Price: <span class="font-semibold">${{ order.total_price }}</span></p>
+            <p class="text-gray-700">Payment Method: <span class="font-semibold">{{ order.get_payment_method_display }}</span></p>
+        </div>
+
+        <div class="mt-6 flex justify-center space-x-4">
+            <a href="{% url 'orders:order_list' %}" 
+               class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">
+                View Orders
+            </a>
+            <a href="/" 
+               class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

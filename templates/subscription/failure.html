@@ -1,0 +1,7 @@
+{% extends "seller/seller_base.html" %}
+
+{% block content %}
+<h2>Payment Failed ❌</h2>
+<p>Something went wrong. Please try again.</p>
+<a href="{% url 'subscription-plans' %}" class="btn btn-danger">Try Again</a>
+{% endblock %}

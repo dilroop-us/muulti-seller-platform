@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    My Profile
+{% endblock %}
+{% load static %}
+
+{% block content %}
+    <br>
+
+    <div class="card glass w-1/2 mx-auto">
+        <div class="w-full flex justify-center">
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="rounded-full shadow-lg w-32 h-32 object-cover border-2 border-gray-300">
+            {% else %}
+                <img src="{% static 'img/default-profile.png' %}" alt="{{ user.username }}" class="rounded-full shadow-lg w-32 h-32 object-cover border-2 border-gray-300">
+            {% endif %}
+        </div>
+        
+        
+
+        <div class="card-body">
+            <h2 class="card-title">Welcome {{ profile.full_name }}</h2>
+
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Name:</strong> {{ profile.full_name|default:"N/A" }}</p>
+            <p><strong>Phone:</strong> {{ profile.phone|default:"N/A" }}</p>
+            <p><strong>Address:</strong> {{ profile.address_line_1|default:"N/A" }}</p>
+            <p><strong>City:</strong> {{ profile.city|default:"N/A" }}</p>
+            <p><strong>State:</strong> {{ profile.state|default:"N/A" }}</p>
+            <p><strong>Zip Code:</strong> {{ profile.zip_code|default:"N/A" }}</p>
+            <p><strong>Country:</strong> {{ profile.country.name|default:"N/A" }}</p>
+
+            <div class="card-actions justify-end">
+                <a href="{% url 'customer:edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <br>
+{% endblock %}

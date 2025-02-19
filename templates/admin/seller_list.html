@@ -1,0 +1,104 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-3xl font-bold text-gray-800 border-b pb-4">📋 Sellers List</h1>
+
+    <!-- 🔍 Search & Filter Section -->
+    <form method="GET" class="mt-4 flex flex-wrap gap-4 items-center">
+        <input type="text" name="q" placeholder="🔍 Search by email" 
+            class="px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+            value="{{ query }}">
+
+        <select name="verified" class="px-4 py-2 border border-gray-300 rounded-md">
+            <option value="">All Sellers</option>
+            <option value="verified" {% if verified_filter == "verified" %}selected{% endif %}>Verified</option>
+            <option value="not_verified" {% if verified_filter == "not_verified" %}selected{% endif %}>Not Verified</option>
+        </select>
+
+        <select name="onboarded" class="px-4 py-2 border border-gray-300 rounded-md">
+            <option value="">All Sellers</option>
+            <option value="yes" {% if onboarded_filter == "yes" %}selected{% endif %}>Onboarded</option>
+            <option value="no" {% if onboarded_filter == "no" %}selected{% endif %}>Not Onboarded</option>
+        </select>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition">
+            🔍 Search
+        </button>
+    </form>
+
+    <!-- 📊 Sellers Table -->
+    <div class="overflow-x-auto mt-6">
+        <table class="w-full bg-gray-100 rounded-lg shadow-md">
+            <thead class="bg-blue-500 text-white text-left">
+                <tr>
+                    <th class="py-3 px-4">👤 Owner Name</th>
+                    <th class="py-3 px-4">🏪 Store</th>
+                    <th class="py-3 px-4">📜 Subscription</th>
+                    <th class="py-3 px-4">✅ Verification</th>
+                    <th class="py-3 px-4">🚀 Onboarded</th>
+                    <th class="py-3 px-4 text-center">⚙️ Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for seller in page_obj %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="py-3 px-4">{{ seller.store.owner_name }}</td>
+                    <td class="py-3 px-4">{{ seller.store.store_name }}</td>
+                    <td class="py-3 px-4">
+                        {% if seller.seller_profile.subscription and seller.seller_profile.subscription.status == "active" %}
+                            <span class="text-green-600 font-semibold">🟢 Active</span>
+                        {% else %}
+                            <span class="text-red-500 font-semibold">🔴 Inactive</span>
+                        {% endif %}
+                    </td>                    
+                    <td class="py-3 px-4">
+                        {% if seller.seller_profile.is_verified %}
+                            <span class="text-green-600 font-semibold">✅ Verified</span>
+                        {% else %}
+                            <span class="text-red-500 font-semibold">❌ Not Verified</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4">
+                        {% if seller.seller_profile.is_onboarded %}
+                            <span class="text-green-600 font-semibold">✅ Yes</span>
+                        {% else %}
+                            <span class="text-red-500 font-semibold">❌ No</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <a href="{% url 'custom_admin:seller_detail' seller.id %}" 
+                           class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm shadow hover:bg-blue-700 transition">
+                            📄 View Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 📑 Pagination -->
+    <div class="mt-6 flex justify-between items-center">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" 
+               class="px-4 py-2 bg-gray-300 rounded-md shadow-md hover:bg-gray-400 transition">
+                ◀️ Previous
+            </a>
+        {% else %}
+            <span class="px-4 py-2 bg-gray-200 rounded-md opacity-50 cursor-not-allowed">◀️ Previous</span>
+        {% endif %}
+
+        <span class="font-medium">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" 
+               class="px-4 py-2 bg-gray-300 rounded-md shadow-md hover:bg-gray-400 transition">
+                Next ▶️
+            </a>
+        {% else %}
+            <span class="px-4 py-2 bg-gray-200 rounded-md opacity-50 cursor-not-allowed">Next ▶️</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'seller/seller_base.html' %}
+
+{% block title %}
+    Seller Profile
+{% endblock %}
+{% load static %}
+
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="container mt-5 p-4 rounded shadow position-relative">
+    <!-- Profile Heading -->
+    <h2 class="text-center mb-4">My Seller Profile</h2>
+
+    <!-- Seller Information -->
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <div class="w-full flex justify-center">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="rounded-full shadow-lg w-32 h-32 object-cover border-2 border-gray-300">
+                {% else %}
+                    <img src="{% static 'img/default-profile.png' %}" alt="{{ user.username }}" class="rounded-full shadow-lg w-32 h-32 object-cover border-2 border-gray-300">
+                {% endif %}
+            </div>
+            <h4 class="mt-3">Name: {{ store.owner_name }}</h4>
+            <p class="text-muted">{{ store.email }}</p>
+            <p><strong>Phone:</strong> {{ store.phone_number }}</p>
+        </div>
+
+        <!-- Store Details -->
+        <div class="col-md-4 text-center">
+            <div class="card p-3 shadow-sm">
+                <div class="row">
+                    <div class="w-full flex justify-center">
+                        <img src="https://fakeimg.pl/150x150/?text=Logo&retina=1" alt="Store Logo" class="img-fluid rounded-circle border shadow" style="width: 150px; height: 150px;">
+                    </div>
+                    <div class="col-md-8">
+                        <strong><h2>{{ store.store_name }}</h2></strong>
+                        <p class="text-muted">{{ store.store_description }}</p>
+                        <a href="" class="btn btn-primary mt-2">Manage Products</a>
+                        <a href="" class="btn btn-secondary mt-2">View Orders</a>
+                        <a href="{% url 'seller:edit_seller_profile' %}" class="btn btn-secondary mt-2">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+<div class="col-md-4 text-center">
+    <!-- Store Address -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Store Address</h3>
+            <div class="card p-3 shadow-sm">
+                <p><strong>Address:</strong> {{ store.store_address_line_1 }}, {{ store.store_address_line_2 }}</p>
+                <p><strong>City:</strong> {{ store.store_city }}, {{ store.store_state }}, {{ store.store_country }}</p>
+                <p><strong>Zip Code:</strong> {{ store.store_zip_code }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Analytics -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Store Analytics</h3>
+            <div class="card p-3 shadow-sm">
+                <p><strong>Total Sales:</strong> ${{ total_sales }}</p>
+                <p><strong>Average Rating:</strong> ⭐ {{ average_rating }}/5</p>
+                <p><strong>Total Products:</strong> {{ total_products }}</p>
+                <p><strong>Orders Completed:</strong> {{ completed_orders }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings & Payouts -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Earnings & Payouts</h3>
+            <div class="card p-3 shadow-sm">
+                <p><strong>Current Balance:</strong> ${{ current_balance }}</p>
+                <p><strong>Last Payout:</strong> ${{ last_payout_amount }} ({{ last_payout_date }})</p>
+                <p><strong>Next Payout Date:</strong> {{ next_payout_date }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support & Logout -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="" class="btn btn-red btn-block">Contact Support</a>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+
+
+<br>
+
+
+{% endblock %}

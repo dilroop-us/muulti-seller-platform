@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+
+Plans
+
+{% endblock %}
+
+{% block content %}
+
+<h2>Manage Your Subscription</h2>
+
+{% if subscription %}
+    <p>Your current plan: <strong>{{ subscription.plan.name }}</strong></p>
+    <p>Active until: <strong>{{ subscription.end_date }}</strong></p>
+{% else %}
+    <p>You do not have an active subscription.</p>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <h3>Select a new subscription plan:</h3>
+    {% for plan in plans %}
+        <div>
+            <input type="radio" id="plan_{{ plan.id }}" name="plan_id" value="{{ plan.id }}">
+            <label for="plan_{{ plan.id }}">
+                {{ plan.name }} - ${{ plan.price }} per {{ plan.billing_cycle }}
+            </label>
+        </div>
+    {% endfor %}
+    <button type="submit">Update Subscription</button>
+</form>
+
+
+
+
+{% endblock %}

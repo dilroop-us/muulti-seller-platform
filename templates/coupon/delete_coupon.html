@@ -1,0 +1,26 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+<div class="max-w-lg mx-auto p-8 bg-white shadow-xl rounded-lg mt-10 text-center">
+    <h2 class="text-3xl font-bold text-red-600 mb-4">Delete Coupon</h2>
+    <p class="text-gray-700 text-lg">
+        Are you sure you want to delete the coupon 
+        <span class="font-semibold text-gray-900">"{{ coupon.code }}"</span>?
+    </p>
+
+    <form method="post" class="mt-6 space-y-4">
+        {% csrf_token %}
+        <button 
+            type="submit" 
+            class="w-full px-5 py-3 text-lg font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all focus:outline-none focus:ring-4 focus:ring-red-400"
+        >
+            Confirm Delete
+        </button>
+        <a 
+            href="{% url 'coupons:admin_coupon_list' %}" 
+            class="inline-block w-full text-lg font-medium text-gray-600 hover:text-gray-800 transition"
+        >
+            Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

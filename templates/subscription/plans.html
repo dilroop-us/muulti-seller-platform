@@ -1,0 +1,32 @@
+{% extends 'seller/seller_base.html' %}
+{% load static %}
+
+{% block title %}
+    Subscription Plans
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-white mb-6">Subscription Details</h2>
+
+    {% if subscription and subscription.status == "active" %}
+        <div class="bg-green-100 border border-green-400 text-green-800 p-6 rounded-lg shadow-md">
+            <h4 class="text-lg font-semibold">✅ Your Subscription is Active</h4>
+            <p class="mt-2"><strong>Status:</strong> <span class="px-2 py-1 bg-green-600 text-white rounded">{{ subscription.status|capfirst }}</span></p>
+            <p class="mt-2"><strong>Start Date:</strong> {{ subscription.start_date|date:"F d, Y" }}</p>
+            <p class="mt-2"><strong>Expiration Date:</strong> {{ subscription.expiry_date|date:"F d, Y" }}</p>
+            <p class="mt-4">Enjoy all seller platform features until renewal. 🎉</p>
+        </div>
+    {% else %}
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-800 p-6 rounded-lg shadow-md">
+            <h4 class="text-lg font-semibold">🚨 No Active Subscription</h4>
+            <p class="mt-2">Subscribe for <strong>$100/year</strong> to access the seller platform.</p>
+            <a href="{% url 'subscription:checkout-session' %}" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition">
+                💳 Pay Now
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

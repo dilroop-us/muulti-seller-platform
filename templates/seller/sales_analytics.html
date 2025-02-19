@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Analytics
+{% endblock %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="container mt-5 p-4 bg-light rounded shadow position-relative">
+    <h2>Analytics</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Total Sales</h3>
+            <p>{{ analytics.total_sales }}</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Average Rating</h3>
+            <p>{{ analytics.average_rating }}</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Total Orders</h3>
+            <p>{{ analytics.total_orders }}</p>
+        </div>
+    </div>
+
+
+
+</div>
+
+<br>
+
+
+{% endblock %}

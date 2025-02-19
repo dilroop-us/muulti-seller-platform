@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Product Reviews</h2>
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Customer</th>
+        <th>Rating</th>
+        <th>Comment</th>
+        <th>Created At</th>
+    </tr>
+    {% for review in reviews %}
+    <tr>
+        <td>{{ review.product.name }}</td>
+        <td>{{ review.customer.username }}</td>
+        <td>{{ review.rating }} ⭐</td>
+        <td>{{ review.comment }}</td>
+        <td>{{ review.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

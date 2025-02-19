@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-10 p-6 bg-gray-50 shadow-md rounded-lg">
+    <h2 class="text-3xl font-semibold text-gray-900 mb-6">My Orders</h2>
+
+    <!-- Filter Form -->
+    <form method="GET" class="mb-6 flex flex-wrap gap-4 bg-white p-4 rounded-lg shadow-sm">
+        <select name="status" class="border-gray-300 rounded px-4 py-2">
+            <option value="">All Statuses</option>
+            <option value="pending" {% if status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="processing" {% if status == "processing" %}selected{% endif %}>Processing</option>
+            <option value="shipped" {% if status == "shipped" %}selected{% endif %}>Shipped</option>
+            <option value="delivered" {% if status == "delivered" %}selected{% endif %}>Delivered</option>
+            <option value="canceled" {% if status == "canceled" %}selected{% endif %}>Canceled</option>
+            <option value="refunded" {% if status == "refunded" %}selected{% endif %}>Refunded</option>
+        </select>
+
+        <select name="payment_method" class="border-gray-300 rounded px-4 py-2">
+            <option value="">All Payment Methods</option>
+            <option value="stripe" {% if payment_method == "stripe" %}selected{% endif %}>Stripe</option>
+            <option value="cod" {% if payment_method == "cod" %}selected{% endif %}>Cash on Delivery</option>
+        </select>
+
+        <input type="date" name="start_date" value="{{ start_date }}" class="border-gray-300 rounded px-4 py-2">
+        <input type="date" name="end_date" value="{{ end_date }}" class="border-gray-300 rounded px-4 py-2">
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
+    </form>
+
+    {% if page_obj %}
+        <ul class="divide-y divide-gray-300">
+            {% for order in page_obj %}
+            <li class="p-5 flex flex-wrap justify-between items-center bg-white shadow-sm rounded-lg mb-4 transition-all duration-300 hover:shadow-md">
+                <div>
+                    <span class="text-gray-800 font-medium text-lg">Order #{{ order.order_uuid }}</span>
+                    <span class="ml-3 text-sm px-3 py-1 rounded-full 
+                        {% if order.status == 'pending' %} bg-yellow-100 text-yellow-700 
+                        {% elif order.status == 'processing' %} bg-blue-100 text-blue-700 
+                        {% elif order.status == 'shipped' %} bg-indigo-100 text-indigo-700 
+                        {% elif order.status == 'delivered' %} bg-green-100 text-green-700 
+                        {% elif order.status == 'canceled' %} bg-red-100 text-red-700 
+                        {% elif order.status == 'refunded' %} bg-gray-200 text-gray-700 
+                        {% endif %}">
+                        {{ order.status|title }}
+                    </span>
+                    
+                    <span class="ml-3 text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                        Payment: {{ order.payment_method|title }}
+                    </span>
+
+                    <p class="text-gray-600 text-sm mt-2">Placed on: {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                </div>
+
+                <div class="flex space-x-4">
+                    <a href="{% url 'orders:order_summary' order.order_uuid %}" class="text-blue-600 font-medium hover:underline">
+                        View
+                    </a>
+                    {% if order.status == 'pending' or order.status == 'processing' %}
+                        <form action="{% url 'orders:cancel_order' order.order_uuid %}" method="post">
+                        {% csrf_token %}
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700">
+                                Cancel Order
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="px-3 py-1 bg-gray-200 rounded">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Previous</a>
+            {% endif %}
+
+            <span class="px-3 py-1 bg-blue-600 text-white rounded">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 bg-gray-200 rounded">Last</a>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <p class="text-gray-600 text-center text-lg">No orders found.</p>
+    {% endif %}
+</div>
+{% endblock %}

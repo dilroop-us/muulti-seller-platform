@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    About | Multi-Seller
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero / Page Header Section -->
+<section class="bg-gray-100 py-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            About Our Marketplace
+        </h1>
+        <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+            Discover what makes our multi-seller platform unique and why we’re passionate about empowering merchants worldwide.
+        </p>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="max-w-7xl mx-auto px-4 mt-12 md:mt-16 flex flex-col md:flex-row items-center">
+    <!-- Image -->
+    <div class="md:w-1/2">
+        <!-- Replace with your own image or use a static file reference -->
+        <img 
+            src="/static/img/gaming_setup.jpg" 
+            alt="About Us" 
+            class="rounded-lg shadow-lg"
+        />
+    </div>
+    <!-- Text Content -->
+    <div class="md:w-1/2 md:ml-8 mt-6 md:mt-0">
+        <h2 class="text-3xl font-semibold text-gray-800 mb-4">
+            Who We Are
+        </h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+            We are a team of dedicated professionals committed to helping entrepreneurs and small businesses thrive in the online market. Our platform simplifies the process of setting up a storefront, connecting sellers with customers around the globe.
+        </p>
+        <p class="text-gray-700 leading-relaxed">
+            By focusing on innovation, user experience, and a supportive community, we aim to be the go-to marketplace for discovering unique products while championing independent makers and sellers.
+        </p>
+    </div>
+</section>
+
+<!-- Mission and Vision Section -->
+<section class="bg-white py-12 md:py-16 mt-8 md:mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+            Our Mission &amp; Vision
+        </h2>
+        <p class="text-gray-700 max-w-3xl mx-auto leading-relaxed mb-4">
+            <strong>Mission:</strong> To empower creators, artisans, and merchants by providing a seamless platform that fosters growth and connects them with eager customers seeking unique products.
+        </p>
+        <p class="text-gray-700 max-w-3xl mx-auto leading-relaxed">
+            <strong>Vision:</strong> We envision a vibrant, inclusive marketplace where anyone with a passion for selling can share their products with the world—pushing the boundaries of what small businesses can achieve.
+        </p>
+    </div>
+</section>
+
+<!-- Core Values Section (Optional) -->
+<section class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+    <div class="flex flex-col md:flex-row md:space-x-8">
+        <div class="mb-8 md:mb-0 md:w-1/3 text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                Empowerment
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+                We believe every seller should have the tools and resources needed to succeed in the online marketplace.
+            </p>
+        </div>
+        <div class="mb-8 md:mb-0 md:w-1/3 text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                Innovation
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+                We’re constantly improving our platform to deliver cutting-edge features that enhance the shopping and selling experience.
+            </p>
+        </div>
+        <div class="md:w-1/3 text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                Community
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+                Our marketplace thrives on collaboration—uniting buyers and sellers in a space that values creativity and diversity.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA / Get Involved Section (Optional) -->
+<section class="bg-gray-50 py-10 md:py-14">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+            Ready to Start Selling?
+        </h2>
+        <p class="text-gray-600 max-w-xl mx-auto mb-6">
+            Join our community of sellers and turn your passion into a thriving business.
+        </p>
+        <a 
+            href="#" 
+            class="inline-block bg-blue-600 text-white font-medium py-3 px-6 rounded-md hover:bg-blue-700 transition-colors"
+        >
+            Sign Up Now
+        </a>
+    </div>
+</section>
+
+{% endblock %}

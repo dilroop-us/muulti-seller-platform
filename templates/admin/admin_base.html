@@ -1,0 +1,63 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.css" rel="stylesheet" />
+
+    {% tailwind_css %}
+</head>
+
+<body class="bg-base-100">
+
+<nav class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+    <div class="max-w-screen-xl flex items-center justify-between p-4 mx-auto">
+        <a href="{% url 'custom_admin:dashboard' %}" class="text-2xl font-semibold dark:text-white">Admin Panel</a>
+        <button data-collapse-toggle="navbar" class="md:hidden p-2 text-gray-500 dark:text-gray-400">
+            <span class="sr-only">Toggle menu</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <div id="navbar" class="hidden md:flex space-x-4">
+            <a href="{% url 'custom_admin:dashboard' %}" class="text-gray-900 dark:text-white">Home</a>
+            <div class="relative group">
+                <button class="text-gray-900 dark:text-white">Coupons</button>
+                <div class="absolute hidden group-hover:block bg-white shadow-md dark:bg-gray-800">
+                    <a href="{% url 'coupons:admin_coupon_create' %}" class="block px-4 py-2 text-gray-900 dark:text-white">Create Coupon</a>
+                    <a href="{% url 'coupons:admin_coupon_list' %}" class="block px-4 py-2 text-gray-900 dark:text-white">Coupon List</a>
+                </div>
+            </div>
+            <div class="relative group">
+                <button class="text-gray-900 dark:text-white">Categories</button>
+                <div class="absolute hidden group-hover:block bg-white shadow-md dark:bg-gray-800">
+                    <a href="{% url 'custom_admin:admin_category_list' %}" class="block px-4 py-2 text-gray-900 dark:text-white">Categories</a>
+                    <a href="{% url 'custom_admin:admin_add_category' %}" class="block px-4 py-2 text-gray-900 dark:text-white">Add Category</a>
+                </div>
+            </div>
+            <a href="{% url 'custom_admin:admin_logout' %}" class="text-gray-900 dark:text-white">Logout</a>
+
+        </div>
+    </div>
+</nav>
+
+<main class="flex-grow">
+    {% block content %}
+    
+    
+    {% endblock %}
+</main>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.js"></script>
+
+</body>
+
+</html>

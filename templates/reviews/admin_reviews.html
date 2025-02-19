@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>All Reviews</h2>
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Customer</th>
+        <th>Rating</th>
+        <th>Comment</th>
+        <th>Created At</th>
+        <th>Actions</th>
+    </tr>
+    {% for review in reviews %}
+    <tr {% if review.is_offensive %}style="background-color: #ffcccc;"{% endif %}>
+        <td>{{ review.product.name }}</td>
+        <td>{{ review.customer.username }}</td>
+        <td>{{ review.rating }} ⭐</td>
+        <td>{{ review.comment }}</td>
+        <td>{{ review.created_at }}</td>
+        <td>
+            <form action="{% url 'reviews:delete_review' review.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

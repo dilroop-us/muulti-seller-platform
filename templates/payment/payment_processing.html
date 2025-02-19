@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("✅ Processing Payment...");
+
+            // ✅ Extract payment_intent from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentIntent = urlParams.get("payment_intent");
+
+            if (!paymentIntent) {
+                alert("Payment verification failed. Please contact support.");
+                window.location.href = "/checkout/";
+                return;
+            }
+
+            console.log("🚀 Verifying payment:", paymentIntent);
+
+            // ✅ Call confirm_payment API
+            fetch("{% url 'payment:confirm_payment' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ payment_intent: paymentIntent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("✅ Order Created! Redirecting...");
+                    window.location.href = `/payment/order-complete/${data.order_uuid}/`;
+                } else {
+                    console.error("❌ Order creation failed:", data.error);
+                    alert("Payment error: " + data.error);
+                    window.location.href = "/checkout/";
+                }
+            })
+            .catch(error => {
+                console.error("❌ Server Error:", error);
+                alert("Server error. Please contact support.");
+                window.location.href = "/checkout/";
+            });
+        });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="text-center">
+        <div class="flex items-center justify-center space-x-2">
+            <div class="w-4 h-4 bg-blue-500 rounded-full animate-bounce"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full animate-bounce delay-150"></div>
+            <div class="w-4 h-4 bg-blue-500 rounded-full animate-bounce delay-300"></div>
+        </div>
+        <h1 class="mt-4 text-lg font-semibold text-gray-700">Processing Your Payment...</h1>
+        <p class="mt-2 text-sm text-gray-500">Please wait while we confirm your transaction.</p>
+    </div>
+</body>
+</html>

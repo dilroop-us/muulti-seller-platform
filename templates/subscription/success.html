@@ -1,0 +1,7 @@
+{% extends "seller/seller_base.html" %}
+
+{% block content %}
+<h2>Payment Successful 🎉</h2>
+<p>Thank you for subscribing! Your seller account is now active.</p>
+<a href="{% url 'seller:dashboard' %}" class="btn btn-success">Go to Dashboard</a>
+{% endblock %}

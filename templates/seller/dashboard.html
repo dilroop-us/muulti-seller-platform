@@ -1,0 +1,106 @@
+{% extends 'seller/seller_base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 p-6 bg-gray-800 text-white shadow-lg rounded-lg">
+    <h2 class="text-3xl font-bold mb-6">Seller Dashboard</h2>
+
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Orders -->
+        <div class="p-6 bg-gray-900 rounded-lg shadow-lg flex items-center">
+            <div class="w-16 h-16 flex items-center justify-center bg-blue-500 rounded-full">
+                📦
+            </div>
+            <div class="ml-4">
+                <h3 class="text-xl font-semibold">Total Orders</h3>
+                <p class="text-2xl font-bold">{{ total_orders }}</p>
+            </div>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="p-6 bg-gray-900 rounded-lg shadow-lg flex items-center">
+            <div class="w-16 h-16 flex items-center justify-center bg-green-500 rounded-full">
+                💰
+            </div>
+            <div class="ml-4">
+                <h3 class="text-xl font-semibold">Total Revenue</h3>
+                <p class="text-2xl font-bold">${{ total_revenue|default:"0.00" }}</p>
+            </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="p-6 bg-gray-900 rounded-lg shadow-lg flex items-center">
+            <div class="w-16 h-16 flex items-center justify-center bg-yellow-500 rounded-full">
+                ⏳
+            </div>
+            <div class="ml-4">
+                <h3 class="text-xl font-semibold">Pending Orders</h3>
+                <p class="text-2xl font-bold">{{ pending_orders }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <a href="" class="p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md text-center">
+            📦 Manage Orders
+        </a>
+        <a href="" class="p-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow-md text-center">
+            🛍️ Manage Products
+        </a>
+        <a href="{% url 'seller:edit_seller_profile' %}" class="p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md text-center">
+            ✏️ Edit Profile
+        </a>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="mt-8">
+        <h3 class="text-2xl font-semibold mb-4">Recent Orders</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+                <thead>
+                    <tr class="bg-gray-700 text-gray-200 text-left">
+                        <th class="p-3">Order ID</th>
+                        <th class="p-3">Total Price</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-800 divide-y divide-gray-700">
+                    {% for store_order in recent_orders %}
+                    <tr class="hover:bg-gray-700">
+                        <td class="p-4 font-medium text-gray-300">#{{ store_order.order.order_uuid }}</td>
+                        <td class="p-4 font-semibold text-gray-100">${{ store_order.order.total_price }}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded-lg text-sm font-medium 
+                                {% if store_order.status == 'pending' %} bg-yellow-500 text-gray-900
+                                {% elif store_order.status == 'shipped' %} bg-blue-500 text-gray-900 
+                                {% elif store_order.status == 'completed' %} bg-green-500 text-gray-900 
+                                {% elif store_order.status == 'canceled' %} bg-red-500 text-gray-900 
+                                {% else %} bg-gray-500 text-gray-900 {% endif %}">
+                                {{ store_order.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-gray-400">{{ store_order.order.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="p-4 text-center">
+                            <a href="{% url 'seller:seller_store_order_detail' store_order.id %}" 
+                               class="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-400 transition">
+                               View
+                            </a>
+                        </td>                    
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-gray-400">No recent orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

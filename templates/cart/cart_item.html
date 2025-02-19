@@ -1,0 +1,32 @@
+<!-- templates/cart/partials/cart_item.html -->
+<tr id="cart-item-{{ item.product.id }}" class="border-b border-gray-200 text-gray-600 text-center">
+    <td class="p-3 border">{{ item.product.name }}</td>
+    <td class="p-3 flex items-center justify-center">
+        <button class="bg-gray-300 px-2 py-1 rounded text-black"
+                hx-post="{% url 'cart:update_cart_quantity' item.product.id 'increase' %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-target="#cart-item-{{ item.product.id }}"
+                hx-swap="outerHTML">
+            +
+        </button>
+        <span id="quantity-{{ item.product.id }}" class="mx-3">{{ item.quantity }}</span>
+        <button class="bg-gray-300 px-2 py-1 rounded text-black"
+                hx-post="{% url 'cart:update_cart_quantity' item.product.id 'decrease' %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-target="#cart-item-{{ item.product.id }}"
+                hx-swap="outerHTML">
+            -
+        </button>
+    </td>
+    <td class="p-3 border">${{ item.product.get_discounted_price|floatformat:2 }}</td>
+    <td class="p-3 border">${{ item.get_total_price|floatformat:2 }}</td>
+    <td class="p-3 border">
+        <button class="bg-red-600 px-3 py-1 text-white rounded"
+            hx-delete="{% url 'cart:remove_from_cart' item.product.id %}"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            hx-target="#cart-item-{{ item.product.id }}"
+            hx-swap="outerHTML">
+            Remove
+        </button>
+    </td>
+</tr>

@@ -1,0 +1,228 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Flowbite -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.css" rel="stylesheet" />
+    <!-- Include Alpine JS -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <!-- Add CSRF token to a meta tag for global access -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Tailwind CSS -->
+    {% tailwind_css %}
+
+    
+
+    <script>
+        document.body.addEventListener("htmx:configRequest", (event) => {
+          event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+        });
+    </script>
+      
+    
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <nav class="bg-white shadow">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="" class="text-xl font-semibold text-gray-700">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" class="h-10">
+            </a>
+
+            <div class="block lg:hidden">
+                <button class="text-gray-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="hidden lg:flex items-center space-x-6">
+                <a href="{% url 'core:home' %}" class="text-gray-700 hover:text-blue-500">Home</a>
+                <a href="{% url 'core:shop' %}" class="text-gray-700 hover:text-blue-500">Shop</a>
+
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-500 focus:outline-none">Categories 
+                        <i class="fas fa-chevron-down ml-1"></i>
+                    </button>
+                    <div class="absolute hidden bg-white shadow-md rounded-md group-hover:block w-48 z-50">
+                        {% for category in categories %}
+                            <a href="{% url 'core:shop_category' category.slug %}" 
+                               class="block px-4 py-2 hover:bg-gray-100 text-gray-800">
+                                {{ category.name }}
+                            </a>
+                        {% empty %}
+                            <p class="px-4 py-2 text-gray-500">No categories available</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                
+                {% if request.user.is_authenticated %}
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-500 focus:outline-none">
+                        My Account <i class="fas fa-chevron-down ml-1"></i>
+                    </button>
+                    <div class="absolute hidden bg-white shadow-md rounded-md group-hover:block w-48 z-50">
+                        <a href="{% url 'customer:profile' %}" class="block px-4 py-2 hover:bg-gray-100">View Profile</a>
+                        <a href="{% url 'customer:edit_profile' %}" class="block px-4 py-2 hover:bg-gray-100">Edit Profile</a>
+                        <a href="{% url 'wishlist:wishlist' %}" class="block px-4 py-2 hover:bg-gray-100">Wish List</a>
+                        <a href="{% url 'orders:order_list' %}" class="block px-4 py-2 hover:bg-gray-100">Orders</a>
+                        <a href="{% url 'checkout:customer_addresses' %}" class="block px-4 py-2 hover:bg-gray-100">Addresses</a>
+                        <a href="{% url 'customer:payment_history' %}" class="block px-4 py-2 hover:bg-gray-100">Payment History</a>
+                        <a href="{% url 'account_logout' %}" class="block px-4 py-2 hover:bg-gray-100">Log Out</a>
+                    </div>
+                </div>
+
+                <!-- <a href="{% url 'account_logout' %}" class="text-gray-700 hover:text-blue-500">Log Out</a> -->
+                {% else %}
+                <a href="{% url 'account_login' %}" class="text-gray-700 hover:text-blue-500">Sign In</a>
+                <a href="{% url 'account_signup' %}" class="text-gray-700 hover:text-blue-500">Register</a>
+                <a href="{% url 'seller:intro' %}" class="text-gray-700 hover:text-blue-500">Become Seller</a>
+                {% endif %}
+
+                <a href="{% url 'core:about' %}" class="text-gray-700 hover:text-blue-500">About Us</a>
+                <a href="{% url 'core:contact' %}" class="text-gray-700 hover:text-blue-500">Contact Us</a>
+                <a href="{% url 'cart:cart' %}" class="text-gray-700 hover:text-blue-500 flex items-center">
+                    <span class="indicator">
+                        <i class="far fa-shopping-cart text-lg"></i>
+                        <span class="indicator-item badge badge-secondary text-xs">
+                            {{ cart_total_quantity }}
+                        </span>
+                    </span>
+                </a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
+    class="fixed flex flex-col space-y-2 left-5 bottom-5 z-50 transition-opacity duration-500 ease-in-out">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+                x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
+                x-transition:leave="transition-opacity ease-in duration-500"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                role="alert"
+            >
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8
+                    {% if message.tags == 'success' %}
+                        text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200
+                    {% elif message.tags == 'error' %}
+                        text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200
+                    {% elif message.tags == 'warning' %}
+                        text-orange-500 bg-orange-100 dark:bg-orange-700 dark:text-orange-200
+                    {% else %}
+                        text-blue-500 bg-blue-100 dark:bg-blue-700 dark:text-blue-200
+                    {% endif %}
+                    rounded-lg"
+                >
+                    {% if message.tags == 'success' %}
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                    {% elif message.tags == 'error' %}
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                        </svg>
+                    {% elif message.tags == 'warning' %}
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+                <div class="ms-3 text-sm font-normal">{{ message }}</div>
+                <button @click="show = false" type="button"
+                    class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+                    aria-label="Close">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+
+    
+    <main class="flex-grow">
+        {% block content %}
+
+        {% endblock %}
+    </main>
+
+
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
+            <a class="text-indigo-500">example@email.com</a>
+            <p class="leading-normal my-5">49 Smith St.
+                <br>Saint Cloud, MN 56301
+            </p>
+            <span class="inline-flex">
+                <a class="text-gray-500">
+                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-5 h-5" viewBox="0 0 24 24">
+                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                    </svg>
+                </a>
+                <a class="ml-4 text-gray-500">
+                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                            d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                        </path>
+                    </svg>
+                </a>
+                <a class="ml-4 text-gray-500">
+                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                    </svg>
+                </a>
+                <a class="ml-4 text-gray-500">
+                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                            d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                        </path>
+                    </svg>
+                </a>
+            </span>
+        </div>
+    </footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+
+
+</html>

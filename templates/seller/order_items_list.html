@@ -1,0 +1,72 @@
+{% extends 'seller/seller_base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 p-6 shadow-lg rounded-lg">
+    <h2 class="text-3xl font-bold text-white mb-6">Your Store Order Items</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+            <thead>
+                <tr class="bg-gray-800 text-gray-200 text-left">
+                    <th class="p-3">Order ID</th>
+                    <th class="p-3">Order Item ID</th>
+                    <th class="p-3">Product</th>
+                    <th class="p-3">Quantity</th>
+                    <th class="p-3">Price</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3">Date</th>
+                    <th class="p-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-700 divide-y divide-gray-600">
+                {% for order_item in order_items %}
+                <tr class="hover:bg-gray-600">
+                    <td class="p-4 font-medium text-gray-300">#{{ order_item.order.order_uuid }}</td>
+                    <td class="p-4 font-medium text-gray-300">#{{ order_item.id }}</td>
+                    <td class="p-4 text-gray-300">{{ order_item.product.name }}</td>
+                    <td class="p-4 text-gray-300">{{ order_item.quantity }}</td>
+                    <td class="p-4 font-semibold text-gray-100">${{ order_item.price }}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-lg text-sm font-medium 
+                            {% if order_item.status == 'pending' %} bg-yellow-500 text-gray-900
+                            {% elif order_item.status == 'shipped' %} bg-blue-500 text-gray-900 
+                            {% elif order_item.status == 'delivered' %} bg-green-500 text-gray-900 
+                            {% elif order_item.status == 'canceled' %} bg-red-500 text-gray-900 
+                            {% else %} bg-gray-500 text-gray-900 {% endif %}">
+                            {{ order_item.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="p-4 text-gray-400">{{ order_item.order.created_at|date:"Y-m-d H:i" }}</td>
+                    <td class="p-4 text-center">
+                        <a href="" 
+                           class="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-400 transition">
+                           View / Update
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="p-6 text-center text-gray-400">No order items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-center">
+        {% if order_items.has_previous %}
+            <a href="?page=1" class="px-3 py-2 mx-1 bg-gray-500 text-white rounded-lg">First</a>
+            <a href="?page={{ order_items.previous_page_number }}" class="px-3 py-2 mx-1 bg-gray-500 text-white rounded-lg">Previous</a>
+        {% endif %}
+
+        <span class="px-3 py-2 mx-1 bg-gray-700 text-white rounded-lg">Page {{ order_items.number }} of {{ order_items.paginator.num_pages }}</span>
+
+        {% if order_items.has_next %}
+            <a href="?page={{ order_items.next_page_number }}" class="px-3 py-2 mx-1 bg-gray-500 text-white rounded-lg">Next</a>
+            <a href="?page={{ order_items.paginator.num_pages }}" class="px-3 py-2 mx-1 bg-gray-500 text-white rounded-lg">Last</a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

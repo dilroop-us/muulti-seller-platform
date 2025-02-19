@@ -1,0 +1,12 @@
+{% extends 'seller/seller_base.html' %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Update Order Item</button>
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}  <!-- Extend from your base template -->
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-gray-800 border-b pb-3">My Wishlist</h2>
+
+    {% if wishlist.products.all %}
+        <ul class="mt-5 space-y-4">
+            {% for product in wishlist.products.all %}
+                <li class="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-sm hover:bg-gray-200 transition">
+                    <a href="{% url 'core:product_details' product.slug %}" class="text-lg font-medium text-gray-800 hover:underline">
+                        {{ product.name }}
+                    </a>                    
+                    <a href="{% url 'wishlist:remove_from_wishlist' product.id %}" class="text-red-500 hover:text-red-700 font-semibold">
+                        Remove ❌
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="mt-6 text-center">
+            <a href="{% url 'wishlist:clear_wishlist' %}" class="inline-block bg-red-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-700 transition">
+                Clear Wishlist 🗑️
+            </a>
+        </div>
+    {% else %}
+        <p class="mt-5 text-center text-gray-500 text-lg">
+            Your wishlist is empty. 🛒
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

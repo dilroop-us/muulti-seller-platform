@@ -1,0 +1,68 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-2xl font-bold mb-4">{{ store.store_name }} - Products</h1>
+
+    <!-- Search Bar -->
+    <form method="GET" class="mb-4 flex gap-4">
+        <input type="text" name="q" placeholder="Search by product name"
+            class="px-4 py-2 border rounded-md focus:ring focus:ring-blue-300"
+            value="{{ query }}">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+    </form>
+
+    <!-- Products Table -->
+    <div class="overflow-x-auto">
+        <table class="w-full bg-gray-100 rounded-lg shadow-md">
+            <thead class="bg-blue-500 text-white">
+                <tr>
+                    <th class="py-2 px-4">Product Name</th>
+                    <th class="py-2 px-4">Price</th>
+                    <th class="py-2 px-4">Stock</th>
+                    <th class="py-2 px-4">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in page_obj %}
+                <tr class="border-b">
+                    <td class="py-2 px-4 text-center">{{ product.name }}</td>
+                    <td class="py-2 px-4 text-center">${{ product.price }}</td>
+                    <td class="py-2 px-4 text-center">
+                        {% if product.stock == 0 %}
+                            <span class="text-red-500 font-semibold">Out of Stock</span>
+                        {% else %}
+                            {{ product.stock }}
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4 text-center">
+                        {% if product.is_available %}
+                            ✅ Active
+                        {% else %}
+                            ❌ Inactive
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">No products found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 flex justify-between">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-gray-300 rounded-md">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-gray-300 rounded-md">Next</a>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'custom_admin:seller_list' %}" class="mt-6 inline-block px-4 py-2 bg-gray-600 text-white rounded-md">Back to Sellers</a>
+</div>
+{% endblock %}

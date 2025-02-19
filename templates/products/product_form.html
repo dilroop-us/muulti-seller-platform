@@ -1,0 +1,25 @@
+{% extends "seller/seller_base.html" %}
+{% block title %}
+    Add Product
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Create Product</h2>
+    
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        
+        <div class="space-y-3">
+            {{ form|crispy }}
+        </div>
+        
+        <button type="submit" 
+            class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+            Create Product
+        </button>
+    </form>
+</div>
+{% endblock %}

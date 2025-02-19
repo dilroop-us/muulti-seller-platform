@@ -1,0 +1,12 @@
+<!-- templates/cart/partials/mini_cart.html -->
+<div id="mini-cart" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed top-5 right-5 z-50">
+    <div class="bg-green-500 text-white p-3 rounded shadow-lg">
+        <strong>{{ product.name }}</strong> was added to your cart.
+        <div class="mt-1 text-sm">
+            Total Items: {{ cart.cartitem_set.count }} |
+            Total: ${{ cart.get_subtotal|floatformat:2 }}
+            
+        </div>
+        <strong><a href="{% url 'cart:cart' %}">View Cart</a></strong>
+    </div>
+</div>

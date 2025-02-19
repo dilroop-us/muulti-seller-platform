@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .order-summary {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Thank you for your order, {{ order.customer.first_name }}!</h2>
+        <p>Your order <strong>#{{ order.order_uuid }}</strong> has been successfully placed.</p>
+        <p><strong>Total Amount:</strong> ${{ order.total_price }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method|upper }}</p>
+        <p><strong>Shipping Address:</strong> {{ order.shipping_address }}</p>
+        
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <ul>
+                {% for item in order.items.all %}
+                    <li>{{ item.product.name }} ({{ item.quantity }}x) - ${{ item.price }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <p>We will notify you when your order is shipped!</p>
+        <p>Thank you for shopping with us.</p>
+        
+        <div class="footer">
+            &copy; {{ current_year }} Your Company Name | All Rights Reserved.
+        </div>
+    </div>
+</body>
+</html>

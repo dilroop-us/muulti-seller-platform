@@ -1,0 +1,66 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        Manage Featured Products
+    </h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg shadow">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-100 text-gray-700 text-sm font-semibold">
+                    <tr>
+                        <th class="px-4 py-3 border-b">Select</th>
+                        <th class="px-4 py-3 border-b">Product</th>
+                        <th class="px-4 py-3 border-b">Store</th>
+                        <th class="px-4 py-3 border-b">Price</th>
+                        <th class="px-4 py-3 border-b text-center">Sold Count</th>
+                        <th class="px-4 py-3 border-b text-center">Featured</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for product in products %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-3">
+                            <input type="checkbox" name="featured_products" value="{{ product.id }}" 
+                                   class="w-5 h-5 text-green-500 border-gray-300 rounded focus:ring-green-500"
+                                   {% if product.featured %} checked {% endif %}>
+                        </td>
+                        <td class="px-4 py-3 font-medium text-gray-800">{{ product.name }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ product.store }}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-700">${{ product.get_discounted_price }}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-700 text-center">{{ product.sold_count }}</td>
+                        <td class="px-4 py-3 text-lg text-center">
+                            {% if product.featured %}
+                                <span class="text-green-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </span>
+                            {% else %}
+                                <span class="text-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="mt-6 flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition focus:ring focus:ring-green-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            Save Featured Products
+        </button>
+    </form>
+</div>
+{% endblock %}

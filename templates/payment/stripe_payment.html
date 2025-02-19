@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | Stripe</title>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Complete Your Payment</h1>
+            <p class="text-gray-600 text-center mb-4">Secure checkout powered by Stripe.</p>
+
+            <!-- Payment Form -->
+            <form id="payment-form" class="space-y-4">
+                <div id="payment-element" class="p-3 border rounded-md shadow-sm bg-gray-50"></div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="hidden text-red-600 text-center"></div>
+
+                <button id="submit-button" type="submit"
+                        class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 
+                               focus:outline-none focus:ring focus:ring-blue-300 transition duration-300 w-full flex items-center justify-center">
+                    <span id="button-text">Pay Now</span>
+                    <svg id="loading-spinner" class="hidden animate-spin h-5 w-5 ml-2 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path d="M4 12a8 8 0 018-8v8z" fill="currentColor"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("🚀 Stripe Payment Loaded!");
+    
+            // ✅ Ensure Stripe Public Key and Client Secret Exist
+            const stripePublicKey = "{{ stripe_public_key|escapejs }}";
+            const clientSecret = "{{ client_secret|escapejs }}";
+    
+            if (!stripePublicKey || !clientSecret) {
+                console.error("❌ Missing Stripe keys!");
+                alert("Payment error: Missing Stripe keys. Please contact support.");
+                return;
+            }
+    
+            console.log("✅ Stripe Public Key:", stripePublicKey);
+            console.log("✅ Client Secret:", clientSecret);
+    
+            const stripe = Stripe(stripePublicKey);
+            const elements = stripe.elements({ clientSecret });
+            const paymentElement = elements.create("payment");
+            paymentElement.mount("#payment-element");
+    
+            const form = document.getElementById("payment-form");
+            const submitButton = document.getElementById("submit-button");
+            const buttonText = document.getElementById("button-text");
+            const loadingSpinner = document.getElementById("loading-spinner");
+            const errorMessage = document.getElementById("error-message");
+    
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                submitButton.disabled = true;
+                buttonText.textContent = "Processing...";
+                loadingSpinner.classList.remove("hidden");
+    
+                try {
+                    const { paymentIntent, error } = await stripe.confirmPayment({
+                        elements,
+                        confirmParams: {
+                            return_url: window.location.origin + "/payment/processing/"  // ✅ Ensures redirection after Stripe Payment
+                        }
+                    });
+    
+                    if (error) {
+                        console.error("❌ Payment Error:", error.message);
+                        showError(error.message);
+                    } else {
+                        console.log("✅ Payment Confirmed! Sending to backend...");
+    
+                        // ✅ Send payment confirmation to Django
+                        fetch("{% url 'payment:confirm_payment' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: JSON.stringify({ payment_intent: paymentIntent.id })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log("✅ Order Created! Redirecting...");
+                                window.location.href = `/payment/order-complete/${data.order_uuid}/`;
+                            } else {
+                                console.error("❌ Order creation failed:", data.error);
+                                showError(data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("❌ Server Error:", error);
+                            showError("Server error. Please contact support.");
+                        });
+                    }
+                } catch (err) {
+                    console.error("❌ Unexpected Error:", err);
+                    showError("Unexpected error occurred. Please try again.");
+                } finally {
+                    submitButton.disabled = false;
+                    buttonText.textContent = "Pay Now";
+                    loadingSpinner.classList.add("hidden");
+                }
+            });
+    
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove("hidden");
+            }
+        });
+    </script>
+    
+    
+
+</body>
+</html>

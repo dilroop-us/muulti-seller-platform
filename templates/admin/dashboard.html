@@ -1,0 +1,102 @@
+{% extends 'admin/admin_base.html' %}
+
+
+{% block title %}
+    Dashboard
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+    
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+  
+    <!-- Platform Performance Summary -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-700">Platform Performance</h2>
+      <p class="text-sm text-gray-500 mt-2">Revenue: ${{ revenue_this_month }}</p>
+      <p class="text-sm text-gray-500">Active Sellers: {{ active_sellers }}</p>
+      <p class="text-sm text-gray-500">Active Customers: {{ active_customers }}</p>
+      <p class="text-sm text-gray-500">Total Orders: {{ total_orders }}</p>
+    </div>
+  
+<!-- Sellers Overview -->
+<div class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-lg font-semibold text-gray-700">Stores Overview</h2>
+    <p class="text-sm text-gray-500 mt-2">Registered Stores: {{ total_sellers }}</p>
+    <p class="text-sm text-gray-500">Pending Approvals: {{ pending_seller_approvals }}</p>
+    <p class="text-sm text-gray-500">Top Seller: {{ top_seller }}</p>
+
+    <br>
+    <a href="{% url 'custom_admin:seller_list' %}" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+        View Sellers
+    </a>
+
+
+</div>
+
+  
+    <!-- Product Overview -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-700">Product Overview</h2>
+      <p class="text-sm text-gray-500 mt-2">Total Products: {{ total_products }}</p>
+      <p class="text-sm text-gray-500">Pending Approvals: {{ pending_product_approvals }}</p>
+      <p class="text-sm text-gray-500">Flagged Products: {{ flagged_products }}</p>
+      <br>
+      <a href="{% url 'custom_admin:admin_store_products' %}" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+        Featured Products
+      </a>
+      
+    </div>
+  
+    <!-- Order Overview -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-700">Order Overview</h2>
+      <p class="text-sm text-gray-500 mt-2">Total Orders: {{ total_orders }}</p>
+      <p class="text-sm text-gray-500">Pending Shipments: {{ pending_shipments }}</p>
+      <p class="text-sm text-gray-500">Canceled Orders: {{ canceled_orders }}</p>
+      <br>
+      <a href="{% url 'custom_admin:admin_orders' %}" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+        Orders
+      </a>
+    </div>
+  
+    <!-- Customer Overview -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-700">Customer Overview</h2>
+      
+      <p class="text-sm text-gray-500 mt-2">Registered Users: {{ total_users }}</p>
+      <p class="text-sm text-gray-500">Active Users: {{ active_users }}</p>
+      <p class="text-sm text-gray-500">Top Customer: {{ top_customer }}</p>
+      <br>
+      <a href="{% url 'custom_admin:admin_customer_list' %}" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+        View Customers
+      </a>
+    
+
+    </div>
+  
+    <!-- Financial Overview -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-700">Financial Overview</h2>
+      <p class="text-sm text-gray-500 mt-2">Total Revenue: ${{ total_revenue }}</p>
+      <p class="text-sm text-gray-500">Pending Payouts: ${{ pending_payouts }}</p>
+      <p class="text-sm text-gray-500">Admin Commission: ${{ admin_commission }}</p>
+      
+      <br>
+      <a href="{% url 'custom_admin:finance_dashboard' %}" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+        View financials
+      </a>
+    </div>
+  
+   
+  
+  </div>
+
+
+
+
+
+{% endblock %}

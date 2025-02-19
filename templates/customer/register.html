@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}  {# Load the crispy_forms template tags #}
+
+{% block title %}
+Shop - Register
+{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center">
+    <div class="bg-white p-5 rounded shadow w-1/2">
+        <h2 class="text-center mb-4">Register</h2>
+        <form method="post" class="flex flex-col gap-4">
+            {% csrf_token %}
+            <div class="row">
+                <div class="w-full">
+                    {{ form.username|as_crispy_field }}
+                </div>
+                <div class="w-full">
+                    {{ form.email|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="w-full">
+                    {{ form.password1|as_crispy_field }}
+                </div>
+                <div class="w-full">
+                    {{ form.password2|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="w-full">
+                    {{ form.first_name|as_crispy_field }}   
+                </div>
+                <div class="w-full">
+                    {{ form.last_name|as_crispy_field }}
+                </div>
+            </div>
+            {{ form.phone_number|as_crispy_field }}
+            <button type="submit" class="btn btn-primary mt-3 w-100">Register</button>
+        </form>
+    </div>
+</div>
+<br>
+{% endblock %}

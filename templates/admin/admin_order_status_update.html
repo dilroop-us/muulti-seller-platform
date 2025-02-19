@@ -1,0 +1,25 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-gray-900 shadow-lg rounded-lg">
+    <h2 class="text-3xl font-bold text-white mb-6">Update Order Status - #{{ order.id }}</h2>
+
+    <form method="post" class="bg-gray-800 p-6 rounded-lg">
+        {% csrf_token %}
+
+        <label class="block text-white text-lg font-semibold mb-2">Order Status</label>
+        {{ form.status }}
+
+        <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition">
+            Update Status
+        </button>
+    </form>
+
+    <div class="mt-6">
+        <a href="{% url 'custom_admin:admin_order_detail' order.id %}" 
+           class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition">
+           Back to Order Details
+        </a>
+    </div>
+</div>
+{% endblock %}

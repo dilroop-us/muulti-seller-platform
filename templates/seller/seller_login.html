@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Seller Login
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Seller Login</h1>
+
+        <!-- Display messages (for errors like invalid credentials) -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <p class="text-sm text-red-600 text-center">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'seller:seller_login' %}" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label for="username" class="block text-gray-700 font-medium">Email:</label>
+                <input type="email" name="username" required class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <div>
+                <label for="password" class="block text-gray-700 font-medium">Password:</label>
+                <input type="password" name="password" required class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <div class="flex justify-between items-center">
+                <a href="{% url 'seller:password_reset' %}" class="text-sm text-green-500 hover:underline">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                Login
+            </button>
+        </form>
+
+        <p class="text-center text-sm mt-4 text-gray-600">
+            Don't have an account? <a href="{% url 'seller:seller_register' %}" class="text-green-500 font-medium hover:underline">Sign up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

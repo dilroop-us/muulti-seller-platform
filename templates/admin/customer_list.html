@@ -1,0 +1,75 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4">Customer List</h2>
+
+    <!-- Search & Filter Form -->
+    <form method="GET" class="mb-4 flex flex-wrap gap-4">
+        <input type="text" name="q" placeholder="Search by email" value="{{ query }}"
+            class="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        <select name="country" class="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Countries</option>
+            {% for country in countries %}
+                <option value="{{ country }}" {% if country_filter == country %}selected{% endif %}>{{ country }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Filter</button>
+    </form>
+
+    <!-- Customer Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-3 text-left">Email</th>
+                    <th class="p-3 text-left">Full Name</th>
+                    <th class="p-3 text-left">Phone</th>
+                    <th class="p-3 text-left">Country</th>
+                    <th class="p-3 text-left">Joined At</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for customer in page_obj %}
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3">{{ customer.customer.email }}</td>
+                    <td class="p-3">{{ customer.full_name }}</td>
+                    <td class="p-3">{{ customer.phone|default:"N/A" }}</td>
+                    <td class="p-3">{{ customer.country|default:"N/A" }}</td>
+                    <td class="p-3">{{ customer.created_at|date:"Y-m-d" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="p-4 text-center text-gray-500">No customers found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 flex justify-between items-center">
+        <div class="text-sm text-gray-600">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </div>
+
+        <div class="space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&q={{ query }}&country={{ country_filter }}"
+                   class="px-3 py-1 bg-gray-300 rounded-lg hover:bg-gray-400 transition">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&country={{ country_filter }}"
+                   class="px-3 py-1 bg-gray-300 rounded-lg hover:bg-gray-400 transition">Previous</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&country={{ country_filter }}"
+                   class="px-3 py-1 bg-gray-300 rounded-lg hover:bg-gray-400 transition">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}&country={{ country_filter }}"
+                   class="px-3 py-1 bg-gray-300 rounded-lg hover:bg-gray-400 transition">Last</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

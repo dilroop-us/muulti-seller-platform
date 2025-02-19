@@ -1,0 +1,57 @@
+{% extends 'seller/seller_base.html' %}
+{% load static %}
+
+{% block title %}
+    Product Details
+{% endblock %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="container mx-auto mt-10 px-5">
+  <div class="bg-gray-100 shadow-lg rounded-lg p-6 items-center justify-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ product.name }}</h2>
+    
+    {% if product.image %}
+      <img class="h-48 w-48 object-cover rounded-md mb-4" src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <img class="h-48 w-48 object-cover rounded-md mb-4" src="{% static 'img/default.png' %}" alt="Default Product Image">
+    {% endif %}
+    
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Description:</span> {{ product.description }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Price:</span> ${{ product.price }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Discount Price:</span> ${{ product.get_discounted_price }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Stock:</span> {{ product.stock }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Times Sold:</span> {{ sold_count }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Average Rating:</span> ⭐ {{ avg_rating }}/5</p>
+
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Category:</span> 
+      {% for category in product.categories.all %}
+        {{ category.name }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Created:</span> {{ product.created_at|date:"F j, Y, g:i a" }}</p>
+    <p class="text-gray-700 mb-2"><span class="font-semibold">Updated:</span> {{ product.updated_at|date:"F j, Y, g:i a" }}</p>
+
+    <h3 class="text-xl font-semibold mt-6">Customer Reviews</h3>
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="p-4 bg-gray-200 rounded-lg mt-2">
+                <p><strong>{{ review.customer.username }}</strong> - ⭐ {{ review.rating }}/5</p>
+                <p class="text-gray-700">{{ review.comment }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-gray-500">No reviews yet.</p>
+    {% endif %}
+
+    <div class="mt-4 flex gap-4">
+      <a href="{% url 'products:update_product' product.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded">Edit Product</a>
+      <a href="" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">Delete Product</a>
+      <a href="{% url 'products:seller_products' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Back to Products</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

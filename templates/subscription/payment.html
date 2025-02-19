@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <form id="payment-form">
+        {% csrf_token %}
+        <div id="payment-element"></div>
+        <button id="submit">Pay $100</button>
+        <div id="payment-message" class="hidden"></div>
+    </form>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        let stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+    
+        async function initialize() {
+            let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+            let response = await fetch("{% url 'subscription:create-payment-intent' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            let { clientSecret } = await response.json();
+    
+            let elements = stripe.elements();
+            let paymentElement = elements.create("payment", { layout: "tabs" });
+            paymentElement.mount("#payment-element");
+    
+            let form = document.getElementById("payment-form");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                let { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: { return_url: window.location.href }
+                });
+    
+                if (error) {
+                    document.getElementById("payment-message").textContent = error.message;
+                } else if (paymentIntent.status === "succeeded") {
+                    alert("🎉 Payment successful! Subscription activated.");
+                    window.location.reload();
+                }
+            });
+        }
+    
+        initialize();
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Shop {% endblock %}
+
+{% block content %}
+<section class="bg-gray-100 py-10">
+    <div class="container mx-auto px-4">
+
+        <!-- Search & Filters -->
+        <div class="bg-white shadow-lg rounded-lg p-6 flex flex-wrap items-center justify-between mb-6">
+            
+            <!-- Search -->
+            <form method="GET" class="w-full md:w-1/4 flex items-center border rounded-lg overflow-hidden">
+                <input type="text" name="q" value="{{ query }}" placeholder="🔍 Search..."
+                    class="w-full p-2 border-none focus:ring-0 focus:outline-none">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2">Search</button>
+            </form>
+
+            <!-- Price Filter -->
+            <form method="GET" class="w-full md:w-1/4 flex gap-2">
+                <input type="number" name="min_price" value="{{ min_price }}" placeholder="💲 Min"
+                    class="p-2 border rounded-lg w-1/2 shadow-md">
+                <input type="number" name="max_price" value="{{ max_price }}" placeholder="💲 Max"
+                    class="p-2 border rounded-lg w-1/2 shadow-md">
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg">Filter</button>
+            </form>
+
+        </div>
+
+        <!-- Product Listing Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for product in products %}
+            <div class="relative bg-white p-3 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                
+                <!-- Product Image -->
+                <a class="block relative rounded-lg overflow-hidden">
+                    {% if product.image %}
+                        <img alt="product" class="object-cover object-center w-full h-48 block rounded"
+                            src="{{ product.image.url }}" />
+                    {% else %}
+                        <img alt="product" class="object-cover object-center w-full h-48 block rounded"
+                            src="{% static 'img/default.png' %}" />
+                    {% endif %}
+                </a>
+
+                
+
+                <!-- Product Details -->
+                <div class="mt-3">
+                    <!-- Child Category Badge -->
+                    {% if product.get_child_category %}
+                    <span class="text-gray-500 text-xs tracking-widest mb-1">
+                        {{ product.get_child_category.name }}
+                    </span>
+                    {% endif %}
+
+                    
+                    <h2 class="text-gray-900 text-sm font-semibold truncate">
+                        {{ product.name }}
+                    </h2>
+
+                    <p class="mt-1 text-red-500 text-xs line-through">${{ product.price }}</p>
+                    <p class="text-green-600 text-sm font-bold">${{ product.get_discounted_price }}</p>
+
+                    <div class="mt-2">
+                        {% if product.stock == 0 %}
+                        <p class="text-red-500 font-bold text-xs">Out of Stock</p>
+                        {% elif product.stock < 4 %}
+                        <span class="text-yellow-500 font-semibold text-xs">Only {{ product.stock }} left!</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex gap-2 mt-3">
+                        <button type="button"
+                            hx-post="{% url 'cart:add_to_cart' product.id %}"
+                            hx-target="#mini-cart-container"
+                            hx-swap="innerHTML"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 text-xs rounded-lg text-center">
+                                🛒 Add
+                        </button>
+
+                        <a href="{% url 'core:product_details' product.slug %}"
+                            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 text-xs rounded-lg text-center">👁 View</a>
+                    </div>
+                    <!-- Store Verification Badge -->
+                {% if product.store.is_verified %}
+                <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                    Verified Store
+                </span>
+                {% endif %}
+
+                <!-- Wishlist Button -->
+                <form 
+                    hx-post="{% url 'wishlist:toggle_wishlist' product.id %}" 
+                    hx-target="#wishlist-icon-{{ product.id }}" 
+                    hx-swap="outerHTML"
+                    class="absolute top-2 left-2 bg-white p-2 rounded-full shadow-md hover:bg-red-500 hover:text-white transition">
+                    {% csrf_token %}
+                    <button type="submit">
+                        <span id="wishlist-icon-{{ product.id }}">
+                        {% if product in wishlist.products.all %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                        </span>
+                    </button>
+                </form>
+
+
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-lg col-span-4 text-center">No products found.</p>
+            {% endfor %}
+        </div>
+
+        <div id="mini-cart-container"></div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center mt-8">
+            <nav class="flex space-x-2">
+                {% if products.has_previous %}
+                <a href="?page=1" class="px-3 py-2 border rounded-lg text-sm">First</a>
+                <a href="?page={{ products.previous_page_number }}" class="px-3 py-2 border rounded-lg text-sm">Prev</a>
+                {% endif %}
+                <span class="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm">{{ products.number }}</span>
+                {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}" class="px-3 py-2 border rounded-lg text-sm">Next</a>
+                <a href="?page={{ products.paginator.num_pages }}" class="px-3 py-2 border rounded-lg text-sm">Last</a>
+                {% endif %}
+            </nav>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

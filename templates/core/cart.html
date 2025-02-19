@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Cart
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    {% if cart_items %}
+        <h1 class="mb-4 text-center text-2xl font-bold text-black">Your Shopping Cart</h1>
+
+        <div id="cart-items" class="flex flex-wrap justify-center gap-4">
+            <div class="w-full md:w-9/12">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead class="bg-gray-200 text-gray-600">
+                        <tr>
+                            <th class="p-2 border">Product</th>
+                            <th class="p-2 border">Quantity</th>
+                            <th class="p-2 border">Price</th>
+                            <th class="p-2 border">Item Total</th>
+                            <th class="p-2 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-body">
+                        {% csrf_token %}
+                        {% for item in cart_items %}
+                            {% include 'cart/cart_item.html' with item=item %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="w-full md:w-3/12 mt-4 text-center">
+                <!-- AlpineJS component for cart total -->
+                <div x-data="{ total: {{ total_price|floatformat:2 }} }"
+                     x-init="
+                       document.addEventListener('htmx:afterRequest', function() {
+                         fetch('{% url 'cart:cart_total' %}')
+                           .then(response => response.json())
+                           .then(data => { total = data.total_price });
+                       });
+                     "
+                     class="text-lg font-bold border-2 border-black rounded-md p-3">
+                    Total: $<span x-text="total"></span>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <a class="bg-blue-500 text-white px-4 py-2 mt-4 rounded block text-center"
+                       href="{% url 'checkout:checkout_view' %}">
+                        Proceed to Checkout
+                    </a>
+                {% else %}
+                    <div class="mt-4">
+                        <p class="text-gray-500">You need an account to checkout.</p>
+                        <a href="{% url 'account_signup' %}" class="bg-green-500 text-white px-4 py-2 rounded block text-center">
+                            Create an Account
+                        </a>
+                        <p class="text-gray-500 mt-2">Already have an account?</p>
+                        <a href="{% url 'account_login' %}" class="bg-gray-500 text-white px-4 py-2 rounded block text-center">
+                            Login
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+        <div id="empty-cart" class="text-center">
+            <p class="text-gray-500">Your cart is currently empty.</p>
+            <br/>
+            <a href="{% url 'core:shop' %}" class="bg-gray-500 text-white px-4 py-2 rounded">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

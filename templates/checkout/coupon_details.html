@@ -1,0 +1,13 @@
+{% if message %}
+<p class="{% if coupon_discount > 0 %}text-green-500{% else %}text-red-500{% endif %} font-bold">
+    {{ message }}
+</p>
+{% endif %}
+<div class="flex justify-between font-bold mt-4">
+    <span>Total Price:</span>
+    <span>${{ total_price|floatformat:2 }}</span>
+</div>
+<div class="flex justify-between font-bold">
+    <span>You Saved:</span>
+    <span>${{ coupon_discount|floatformat:2 }}</span>
+</div>
